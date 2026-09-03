@@ -1,0 +1,169 @@
+[[tool.poetry.source]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+priority = "primary"
+
+[tool.poetry]
+name = "taurus-auth"
+version = "0.1.0"
+description = "Taurus 票据鉴权服务"
+authors = ["Taurus Team"]
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+homepage = "https://github.com/taurus-stack/taurus-auth"
+repository = "https://github.com/taurus-stack/taurus-auth"
+documentation = "https://github.com/taurus-stack/taurus-auth#readme"
+keywords = ["authentication", "ticket", "security", "django", "macaroon"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+]
+packages = [
+    { include = "ticket" },
+    { include = "taurus_auth" },
+]
+include = ["LICENSE", "README.md", "CHANGELOG.md"]
+exclude = ["tests", "tests.*", "*.test", "*.test.*"]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/taurus-stack/taurus-auth/issues"
+"Changelog" = "https://github.com/taurus-stack/taurus-auth/blob/main/CHANGELOG.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^4.2.0"
+djangorestframework = "^3.14.0"
+djangorestframework-simplejwt = "^5.3.0"
+pymacaroons = "^0.13.0"
+redis = "^5.0.0"
+pymysql = "^1.1.0"
+pydantic = "^2.5.0"
+pydantic-settings = "^2.1.0"
+gunicorn = "^21.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-django = "^4.7.0"
+pytest-cov = "^4.1.0"
+black = "^23.12.0"
+isort = "^5.13.0"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+django-stubs = "^4.2.7"
+djangorestframework-stubs = "^3.14.5"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-django = "^4.7.0"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.23.0"
+factory-boy = "^3.3.0"
+faker = "^22.0.0"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^7.2.0"
+sphinx-rtd-theme = "^2.0.0"
+myst-parser = "^2.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_gitignore = true
+known_django = ["django"]
+known_drf = ["rest_framework"]
+known_first_party = ["ticket", "taurus_auth"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "DRF", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+skip_glob = ["**/migrations/*.py"]
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "taurus_auth.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "taurus_auth.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=ticket",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+testpaths = ["ticket", "tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["ticket"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/test_*.py",
+    "manage.py",
+    "taurus_auth/wsgi.py",
+    "taurus_auth/asgi.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]

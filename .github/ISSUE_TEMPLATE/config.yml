@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: mailto:taurus-stack@outlook.com
+    about: Please report security vulnerabilities privately via email
+  - name: Questions & Discussions
+    url: https://github.com/taurus-stack/taurus-auth/discussions
+    about: Please use GitHub Discussions for questions and general discussions

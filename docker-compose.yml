@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  taurus-auth:
+    build: .
+    container_name: taurus-auth
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=taurus_auth
+      - DB_USER=taurus
+      - DB_PASSWORD=taurus_password
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - REDIS_URL=redis://redis:6379/1
+      - BACKEND_JWT_SECRET=your-jwt-secret-key-change-in-production
+      - BACKEND_JWT_EXPIRES_MINUTES=60
+      - ALLOWED_BACKEND_IPS=
+      - ALLOWED_BACKEND_SERVICES=taurus-backend
+      - RATELIMIT_ENABLE=True
+      - RATELIMIT_RATE=100/m
+      - MACAROON_ROOT_KEY=your-macaroon-root-key-change-in-production
+      - TICKET_DEFAULT_EXPIRES_MINUTES=5
+      - TICKET_MAX_EXPIRES_MINUTES=60
+      - SECRET_KEY=your-django-secret-key-change-in-production
+      - DEBUG=False
+      - ALLOWED_HOSTS=*
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - taurus-network
+    volumes:
+      - ./logs:/app/logs
+
+  mysql:
+    image: mysql:8.0
+    container_name: taurus-auth-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=taurus_auth
+      - MYSQL_USER=taurus
+      - MYSQL_PASSWORD=taurus_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - taurus-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: taurus-auth-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - taurus-network
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  taurus-network:
+    driver: bridge

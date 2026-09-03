@@ -1,0 +1,28 @@
+# ====================================================================
+# taurus-auth — Django 独立票据鉴权服务
+# ====================================================================
+
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# 🔒 SECURITY
+taurus_auth/settings_local.py
+certs/*.key
+*.env
+*.env.local
+!*.env.example
+
+# 运行时
+logs/
+*.log
+nohup.out
+
+# 临时
+_debug*.py
+_db/
+db/dump*.sql
+
+# Django
+*.sqlite3
