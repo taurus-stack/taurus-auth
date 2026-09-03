@@ -42,7 +42,7 @@ exclude = ["tests", "tests.*", "*.test", "*.test.*"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-django = "^4.2.0"
+django = ">=4.2,<6.0"
 djangorestframework = "^3.14.0"
 djangorestframework-simplejwt = "^5.3.0"
 pymacaroons = "^0.13.0"
