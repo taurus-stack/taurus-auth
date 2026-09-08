@@ -39,6 +39,9 @@ RUN poetry install --no-dev --no-interaction --no-ansi
 # Run database migrations
 RUN python manage.py migrate --noinput || true
 
+# Create logs directory (must exist before chown, and before volume mount so Docker copies ownership)
+RUN mkdir -p /app/logs
+
 # Create non-root user
 RUN useradd -m -u 1000 taurus \
     && chown -R taurus:taurus /app
